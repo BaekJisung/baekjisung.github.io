@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>야구 아침 30분 루틴</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="야구 루틴">
+<meta name="theme-color" content="#0d1828">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1828;--card:#14233a;--card2:#1b2e4a;--ink:#f6f1e7;--mute:#9db0c9;--red:#e63946;--green:#2ec4b6;--orange:#ff9f1c;--yellow:#ffd166;--blue:#4f8cff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overflow:hidden}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.app{height:100%;display:flex;flex-direction:column;padding:14px;gap:12px;max-width:1500px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{font-family:Jua;font-size:22px}
+.logo b{color:var(--red)}
+.sp{flex:1}
+.hbtn{background:var(--card2);color:var(--ink);border:0;border-radius:12px;padding:10px 14px;font:700 15px 'Noto Sans KR';cursor:pointer}
+.main{flex:1;display:grid;grid-template-columns:1.35fr 1fr;gap:12px;min-height:0}
+.stage{position:relative;border-radius:24px;overflow:hidden;min-height:0;background:radial-gradient(ellipse at 50% 35%,#1f3658 0%,#132339 60%,#0f1d30 100%)}
+.stage svg{width:100%;height:100%;display:block}
+.banner{position:absolute;left:50%;top:16px;transform:translateX(-50%);background:var(--yellow);color:#1a1a1a;font-family:Jua;font-size:clamp(20px,3vw,30px);padding:8px 22px;border-radius:999px;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:3}
+.banner.hide{display:none}
+.banner.pop{animation:pop .5s}
+@keyframes pop{0%{transform:translateX(-50%) scale(.6)}60%{transform:translateX(-50%) scale(1.12)}100%{transform:translateX(-50%) scale(1)}}
+.tag{position:absolute;left:16px;top:16px;background:rgba(255,159,28,.18);color:var(--orange);font-weight:900;font-size:15px;padding:6px 12px;border-radius:999px;display:none;z-index:2}
+.tag.on{display:block}
+.counter{position:absolute;left:18px;bottom:14px;font-family:Jua;line-height:1;display:none;z-index:2;text-shadow:0 4px 16px rgba(0,0,0,.5)}
+.counter.on{display:block}
+.counter .c{font-size:clamp(64px,10vw,120px);color:var(--yellow)}
+.counter .o{font-size:clamp(24px,3vw,36px);color:var(--mute)}
+.countdown{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(10,18,30,.6);z-index:5}
+.countdown.on{display:flex}
+.countdown .n{font-family:Jua;font-size:min(30vw,220px);color:var(--yellow);line-height:1}
+.countdown .t{font-family:Jua;font-size:28px}
+/* games */
+.game{position:absolute;inset:0;display:none;z-index:1}
+.game.on{display:block}
+#strike{background:#05080e}
+#sLight{position:absolute;inset:0;opacity:0}
+#sText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:Jua;font-size:clamp(54px,9vw,110px);opacity:0}
+#sHint{position:absolute;left:0;right:0;bottom:18px;text-align:center;color:#55657d;font-weight:700;font-size:15px}
+#dir{background:#05080e;display:none;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:6px;padding:6px}
+#dir.on{display:grid}
+#dir .cell{border-radius:16px;background:#0e1828;display:flex;align-items:center;justify-content:center;font-family:Jua;font-size:clamp(22px,3.5vw,40px);color:#2a3a52;transition:background .05s}
+#dir .cell.blank{background:transparent}
+#dir .cell.mid{background:transparent;color:#3c4d66;font-size:clamp(16px,2vw,22px)}
+#dir .cell.lit{background:var(--yellow);color:#1a1a1a}
+.panel{background:var(--card);border-radius:24px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
+.chip{align-self:flex-start;background:var(--card2);padding:6px 13px;border-radius:999px;font-weight:700;font-size:15px}
+.count{color:var(--mute);font-size:14px;font-weight:700}
+.name{font-family:Jua;font-size:clamp(28px,3.6vw,44px);line-height:1.15;word-break:keep-all}
+.reps{font-family:Jua;font-size:clamp(20px,2.4vw,30px);color:var(--yellow);word-break:keep-all}
+.desc{color:var(--mute);font-size:clamp(15px,1.5vw,17px);line-height:1.5;word-break:keep-all}
+.video{display:none;margin-top:4px;background:var(--card2);border-radius:18px;padding:12px 14px;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.video.on{display:flex}
+.video .yt{flex:none;width:56px;height:40px;border-radius:12px;background:#ff0033;display:flex;align-items:center;justify-content:center}
+.video .yt i{width:0;height:0;border-left:15px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:3px}
+.video b{display:block;font-size:17px}
+.video span{display:block;font-size:13px;color:var(--mute);margin-top:2px}
+.timerrow{display:flex;align-items:center;gap:18px;margin-top:auto;padding-top:6px}
+.ring{position:relative;width:clamp(110px,13vw,160px);aspect-ratio:1;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .tt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:Jua;font-size:clamp(28px,3.4vw,42px)}
+.side{display:flex;flex-direction:column;gap:6px;min-width:0}
+.phase{font-family:Jua;font-size:clamp(18px,2vw,24px);color:var(--green);word-break:keep-all}
+.next{color:var(--mute);font-size:15px;word-break:keep-all}
+.next b{color:var(--ink)}
+.controls{display:flex;gap:10px;margin-top:8px}
+.controls button{flex:1;height:62px;border:0;border-radius:18px;font:700 18px 'Noto Sans KR';cursor:pointer;background:var(--card2);color:var(--ink)}
+.controls button.main-btn{flex:1.6;background:var(--red);color:#fff;font-size:20px}
+.controls button:active{transform:scale(.97)}
+.progress{display:flex;flex-direction:column;gap:6px}
+.bar{position:relative;height:14px;border-radius:999px;background:var(--card2);overflow:hidden;display:flex}
+.bar .seg{height:100%;border-right:2px solid var(--bg);opacity:.35}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--green),#7be0d6);border-radius:999px}
+.ptext{display:flex;justify-content:space-between;color:var(--mute);font-size:14px;font-weight:700}
+.overlay{position:fixed;inset:0;background:rgba(6,12,22,.82);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.overlay.on{display:flex}
+.card{background:var(--card);border-radius:28px;padding:26px;max-width:620px;width:100%;max-height:92vh;overflow:auto}
+.card h1{font-family:Jua;font-size:clamp(30px,4vw,42px);margin-bottom:6px}
+.card h1 b{color:var(--red)}
+.card p.sub{color:var(--mute);margin-bottom:14px;line-height:1.5}
+.slist{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.srow{display:flex;align-items:center;gap:12px;background:var(--card2);border-radius:14px;padding:11px 14px;font-weight:700;cursor:pointer}
+.srow .dot{width:12px;height:12px;border-radius:50%;flex:none}
+.srow .m{margin-left:auto;color:var(--mute);font-weight:700;white-space:nowrap}
+.srow.cur{outline:3px solid var(--yellow)}
+.big{width:100%;height:66px;border:0;border-radius:18px;background:var(--red);color:#fff;font:900 22px 'Noto Sans KR';cursor:pointer}
+.tips{color:var(--mute);font-size:14px;line-height:1.6;margin-top:14px}
+.sub2{font-size:14px;padding:4px 4px 0;font-weight:700}
+@media (orientation:portrait){
+ .main{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+ .panel{padding:14px 16px}
+ .desc{font-size:15px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <header>
+  <div class="logo">⚾ 야구 <b>아침 30분</b> 루틴</div>
+  <div class="sp"></div>
+  <button class="hbtn" id="soundBtn">🔊 소리 켬</button>
+  <button class="hbtn" id="listBtn">전체 순서</button>
+ </header>
+ <div class="main">
+  <div class="stage">
+   <svg id="fig" viewBox="10 40 280 236" preserveAspectRatio="xMidYMid meet"></svg>
+   <div class="game" id="strike"><div id="sLight"></div><div id="sText"></div><div id="sHint">파랑 = 투수 투구 · 초록 = 스트라이크(스윙!) · 빨강 = 볼(참기!)</div></div>
+   <div class="game" id="dir">
+    <div class="cell blank"></div><div class="cell" data-d="뒤">뒤</div><div class="cell blank"></div>
+    <div class="cell" data-d="왼쪽">왼쪽</div><div class="cell mid">가운데</div><div class="cell" data-d="오른쪽">오른쪽</div>
+    <div class="cell blank"></div><div class="cell" data-d="앞">앞</div><div class="cell blank"></div>
+   </div>
+   <div class="tag" id="tag">다음 운동 미리 보기</div>
+   <div class="banner hide" id="banner"></div>
+   <div class="counter" id="counter"><span class="c" id="cNow">0</span><span class="o" id="cOf"> / 10</span></div>
+   <div class="countdown" id="cd"><div class="t">준비하세요!</div><div class="n" id="cdN">5</div></div>
+  </div>
+  <div class="panel">
+   <div style="display:flex;align-items:center;gap:10px"><div class="chip" id="chip">-</div><div class="count" id="count"></div></div>
+   <div class="name" id="name">-</div>
+   <div class="reps" id="reps">-</div>
+   <div class="desc" id="desc">-</div>
+   <a class="video" id="video" href="#" target="_blank" rel="noopener"><div class="yt"><i></i></div><div><b id="vTitle">동작 영상 보기</b><span>유튜브에서 열려요 · 누르면 운동이 일시정지돼요</span></div></a>
+   <div class="timerrow">
+    <div class="ring">
+     <svg viewBox="0 0 160 160"><circle cx="80" cy="80" r="70" fill="none" stroke="#24395a" stroke-width="14"/><circle id="ringFg" cx="80" cy="80" r="70" fill="none" stroke="#2ec4b6" stroke-width="14" stroke-linecap="round" stroke-dasharray="439.82" stroke-dashoffset="0"/></svg>
+     <div class="tt" id="tt">0:00</div>
+    </div>
+    <div class="side">
+     <div class="phase" id="phase"></div>
+     <div class="next" id="next"></div>
+    </div>
+   </div>
+   <div class="controls">
+    <button id="prevBtn">◀ 이전</button>
+    <button id="playBtn" class="main-btn">▶ 시작</button>
+    <button id="nextBtn">다음 ▶</button>
+   </div>
+  </div>
+ </div>
+ <div class="progress">
+  <div class="bar" id="bar"><div class="fill" id="fill"></div></div>
+  <div class="ptext"><span id="elapsed">0:00 진행</span><span id="remain">30:00 남음</span></div>
+ </div>
+</div>
+
+<div class="overlay on" id="startOv">
+ <div class="card">
+  <h1>⚾ 야구 <b>아침 30분</b> 루틴</h1>
+  <p class="sub">화면 속 친구를 따라 해요. 횟수 운동은 "하나, 둘…" 구령에 맞춰, 시간 운동은 초침 소리에 맞춰 해요. 운동 사이에는 10초씩 쉬어요.</p>
+  <div class="slist" id="secList"></div>
+  <button class="big" id="startBtn">운동 시작하기</button>
+  <div class="tips">· 밴드는 가장 약한 것으로, 천천히 정확하게 해요.<br>· 아이패드 <b>설정 → 디스플레이 및 밝기 → 자동 잠금 → 안 함</b>으로 두면 화면이 꺼지지 않아요.<br>· 어깨나 팔꿈치가 아프면 바로 멈춰요.</div>
+ </div>
+</div>
+<div class="overlay" id="listOv">
+ <div class="card">
+  <h1 style="font-size:30px">전체 순서</h1>
+  <p class="sub">누르면 그 운동으로 바로 이동해요.</p>
+  <div class="slist" id="stepList"></div>
+  <button class="big" id="closeList" style="background:var(--card2)">닫기</button>
+ </div>
+</div>
+<div class="overlay" id="endOv">
+ <div class="card" style="text-align:center">
+  <h1 style="font-size:46px">오늘 운동 끝! 🎉</h1>
+  <p class="sub" id="endMsg" style="font-size:18px">30분 동안 정말 잘했어요.</p>
+  <button class="big" id="againBtn">처음부터 다시</button>
+ </div>
+</div>
+
+<script>
+/* ================= 데이터 ================= */
+const SECS=[
+ {k:'①',n:'준비운동',c:'#ffd166'},{k:'②',n:'균형·협응·반응',c:'#ff9f1c'},{k:'③',n:'민첩성·순발력',c:'#e63946'},
+ {k:'④',n:'밴드 어깨 운동',c:'#4f8cff'},{k:'⑤',n:'하체·코어',c:'#2ec4b6'},{k:'⑥',n:'야구 동작',c:'#c77dff'},{k:'⑦',n:'정리 스트레칭',c:'#90be6d'}
+];
+const STEPS=[
+ {s:0,type:'time',name:'제자리 빠르게 걷기',reps:'무릎 높이 들기 · 약 1분',desc:'뛰지 말고 걸어요. 무릎을 배꼽 높이까지 올리고 팔도 크게 흔들어요.',ph:[[56,'march']]},
+ {s:0,type:'count',name:'팔 크게 돌리기',reps:'앞·뒤 각 10회',desc:'팔을 쭉 펴고 크게 원을 그려요.',tempo:1.5,beat:0,total:30,blocks:[{n:10,anim:'armF',label:'앞으로 돌려요'},{n:10,anim:'armB',label:'뒤로 돌려요'}]},
+ {s:0,type:'count',name:'다리 앞뒤 흔들기',reps:'좌우 각 10회',desc:'벽을 한 손으로 잡고 한 발로 서서, 반대 다리를 시계추처럼 앞뒤로 흔들어요.',link:'ogJE4XziR3o',tempo:1.5,beat:1.5,total:31.5,blocks:[{n:10,anim:'legswing',label:'한쪽 다리'},{n:10,anim:'legswing|m',label:'다리 바꿔요'}]},
+ {s:0,type:'time',name:'곰 걷기 → 게 걷기',reps:'각 30초',desc:'곰 걷기는 무릎을 바닥에 대지 않고, 게 걷기는 엉덩이를 들고 걸어요.',link:'shorts/q7ZIMTAwIIo',ph:[[30,'bear','곰 걷기'],[30,'crab','게 걷기로!']]},
+ {s:1,type:'time',name:'한 발 서기',reps:'좌우 각 30초',desc:'서 있는 다리 무릎을 살짝 굽히고 흔들리지 않게 버텨요.',ph:[[30,'onefoot','한 발로 서요'],[30,'onefoot|m','발 바꿔요!']]},
+ {s:1,type:'count',name:'투구 자세로 다리 들고 멈추기',reps:'10회 (2초씩 멈추기)',desc:'글러브 낀 것처럼 손을 가슴에 모으고, 다리를 높이 들어 2초 멈춰요.',link:'MFqnmF9VtZE',tempo:3.5,beat:0,total:40,blocks:[{n:10,anim:'leglift'}]},
+ {s:1,type:'time',name:'양말 공 토스 → 풍선 튕기기',reps:'각 40초',desc:'양말 공을 위로 던지고 박수 1번 친 뒤 잡아요. 다음엔 풍선을 양손으로 번갈아 튕겨요.',ph:[[40,'toss','양말 공 토스 (박수 1번!)'],[40,'balloon','풍선 튕기기로!']]},
+ {s:1,type:'strike',name:'스트라이크·볼 판단 게임',reps:'1분 30초',desc:'파란색이 깜빡이면 투수가 던진 거예요. 초록색이면 스트라이크니까 스윙! 빨간색이면 볼이니까 꾹 참아요.',sec:90},
+ {s:1,type:'dir',name:'방향 반응 게임',reps:'1분 45초',desc:'노랗게 켜진 칸 쪽으로 한 걸음 갔다가 가운데로 돌아와요. 위 칸은 뒤, 아래 칸은 앞이에요.',sec:105},
+ {s:2,type:'count',name:'별 모양 균형 잡기',reps:'한 발로 서서 앞·옆·뒤·옆 찍기, 좌우 각 5바퀴',desc:'한 발로 서서 무릎을 살짝 굽혀요. 다른 발끝으로 앞, 옆, 뒤, 반대쪽 옆을 살짝 찍고 매번 제자리로 돌아와요. 찍는 발에 체중을 싣지 않아요.',link:'Ow02kvMBbCk',tempo:2.5,beat:2.5,total:107.5,blocks:[{n:20,anim:'star',label:'한쪽 발로 서요',words:['앞','옆','뒤','옆'],per:4},{n:20,anim:'star|m',label:'발 바꿔요',words:['앞','옆','뒤','옆'],per:4}]},
+ {s:2,type:'time',name:'좌우 셔플 이동',reps:'20초 × 3세트',desc:'자세를 낮추고 발을 끌듯이 옆으로 빠르게 이동해요. 발이 엇갈리지 않게!',link:'h9s3NYIA85o',ph:[[20,'shuffle','1세트'],[20,'shuffle','2세트'],[20,'shuffle','마지막 세트!']]},
+ {s:2,type:'count',name:'옆으로 크게 런지',reps:'좌우 번갈아 각 8회',desc:'옆으로 크게 한 발 내딛고 엉덩이를 뒤로 빼며 앉았다가 돌아와요.',link:'acvIb1Hzh5M',tempo:2,beat:0,total:40,blocks:[{n:16,anim:'sidelunge'}]},
+ {s:2,type:'count',name:'밴드 몸통 돌리기',reps:'좌우 각 10회',desc:'문고리에 밴드를 걸고 옆으로 서서, 하체부터 몸통을 돌리며 당겨요.',tempo:2,beat:2,total:45,blocks:[{n:10,anim:'rot',label:'한쪽'},{n:10,anim:'rot|m',label:'반대쪽으로'}]},
+ {s:3,type:'count',name:'밴드 당겨 벌리기',reps:'15회 × 2세트',desc:'팔을 앞으로 쭉 펴고 밴드를 양옆으로 벌려요. 등 뒤 날개뼈를 모아요.',link:'CNh2RxeJ9xY',tempo:2.5,beat:2.5,total:77.5,blocks:[{n:15,anim:'pull',label:'1세트'},{n:15,anim:'pull',label:'2세트'}]},
+ {s:3,type:'count',name:'밴드 바깥으로 돌리기',reps:'좌우 각 12회 × 2세트',desc:'문고리에 밴드를 걸고, 팔꿈치를 옆구리에 딱 붙인 채 바깥쪽으로 돌려요.',link:'aaNbjzepJuc',tempo:2.5,beat:2.5,total:127.5,blocks:[{n:12,anim:'ext',label:'한쪽 팔'},{n:12,anim:'ext|m',label:'팔 바꿔요'},{n:12,anim:'ext',label:'2세트'},{n:12,anim:'ext|m',label:'팔 바꿔요'}]},
+ {s:3,type:'count',name:'밴드 안으로 돌리기',reps:'좌우 각 12회 × 2세트',desc:'같은 자세로 이번엔 안쪽으로 돌려요. 천천히 돌아와요.',link:'BIW-nwry9cY',tempo:2.5,beat:2.5,total:127.5,blocks:[{n:12,anim:'int',label:'한쪽 팔'},{n:12,anim:'int|m',label:'팔 바꿔요'},{n:12,anim:'int',label:'2세트'},{n:12,anim:'int|m',label:'팔 바꿔요'}]},
+ {s:3,type:'count',name:'밴드 Y·T 자세',reps:'각 10회',desc:'팔을 Y자, T자로 벌려요. 어깨가 귀 쪽으로 올라가지 않게!',link:'B7zOfA7dx4E',tempo:2.5,beat:2.5,total:52.5,blocks:[{n:10,anim:'Y',label:'Y 자세'},{n:10,anim:'T',label:'T 자세'}]},
+ {s:4,type:'count',name:'밴드 옆걸음',reps:'좌우 각 10걸음',desc:'무릎 위에 밴드를 끼우고 자세를 낮춰 옆으로 걸어요.',link:'1hCKcwwGaww',tempo:1.5,beat:0,total:30,blocks:[{n:10,anim:'bandwalk',label:'오른쪽으로'},{n:10,anim:'bandwalk|m',label:'왼쪽으로'}]},
+ {s:4,type:'count',name:'스쿼트',reps:'15회',desc:'엉덩이를 뒤로 빼면서 앉고, 무릎은 발끝 방향으로!',link:'SmnCqGYOORU',tempo:2,beat:0,total:30,blocks:[{n:15,anim:'squat'}]},
+ {s:4,type:'time',name:'플랭크',reps:'40초 버티기',desc:'머리부터 발끝까지 일자! 엉덩이가 처지지 않게 버텨요.',link:'Zq8nRY9P_cM',ph:[[40,'plank','버텨요!']]},
+ {s:4,type:'count',name:'데드버그',reps:'좌우 번갈아 각 8회',desc:'허리를 바닥에 붙이고, 반대쪽 팔과 다리를 천천히 뻗어요.',link:'TzE9l0n11Zk',tempo:3.5,beat:0,total:60,blocks:[{n:16,anim:'deadbug'}]},
+ {s:5,type:'count',name:'수건 섀도 피칭',reps:'10회',desc:'수건 끝을 잡고 실제처럼 던져요. 앞발이 착지한 뒤 팔을 끝까지 뻗어요.',link:'tN4T96WVeCE',tempo:2.5,beat:0,total:30,blocks:[{n:10,anim:'pitch'}]},
+ {s:5,type:'count',name:'섀도 스윙',reps:'10회',desc:'하체부터 돌리고 머리는 공 보듯이 고정해요.',link:'BOAyHWb450w',tempo:2,beat:0,total:30,blocks:[{n:10,anim:'swing'}]},
+ {s:6,type:'time',name:'정리 스트레칭',reps:'동작마다 20초',desc:'숨을 천천히 쉬면서 쭉 늘려요. 아프지 않을 만큼만!',ph:[[20,'cross','어깨 (한쪽)'],[20,'cross|m','어깨 (반대쪽)'],[20,'quad','허벅지 앞 (한쪽)'],[20,'quad|m','허벅지 앞 (반대쪽)'],[20,'ham','허벅지 뒤 (한쪽)'],[20,'ham|m','허벅지 뒤 (반대쪽)'],[20,'calf','종아리 (한쪽)'],[20,'calf|m','종아리 (반대쪽)']]}
+];
+const NUM=['하나','둘','셋','넷','다섯','여섯','일곱','여덟','아홉','열','열하나','열둘','열셋','열넷','열다섯','열여섯'];
+const REST=10;
+const YT=id=>id.startsWith('shorts/')?'https://www.youtube.com/'+id:'https://www.youtube.com/watch?v='+id;
+
+STEPS.forEach(st=>{
+ if(st.type==='time')st.dur=st.ph.reduce((a,p)=>a+p[0],0);
+ else if(st.type==='count'){let t=0;st._b=st.blocks.map((b,k)=>{if(k>0)t+=st.beat;const o={...b,start:t,end:t+b.n*st.tempo};t=o.end;return o;});st._done=t;st.dur=st.total;}
+ else st.dur=st.sec;
+});
+const SEGS=[];
+STEPS.forEach((st,i)=>{if(i>0)SEGS.push({kind:'rest',i,dur:REST});SEGS.push({kind:'step',i,dur:st.dur});});
+let acc0=0;SEGS.forEach(sg=>{sg.start=acc0;acc0+=sg.dur;});
+const TOTAL=acc0;
+
+/* ================= 자세 ================= */
+const S={x:150,y:180,t:0,a1:6,f1:10,a2:-6,f2:-2,l1:3,s1:3,l2:-3,s2:-3};
+const F={x:150,y:180,t:0,a1:12,f1:8,a2:-12,f2:-8,l1:5,s1:3,l2:-5,s2:-3};
+const s=o=>Object.assign({},S,o), f=o=>Object.assign({},F,o);
+function mir(p,front){
+ const q={...p,x:300-p.x,t:-p.t};
+ if(front){q.a1=-p.a2;q.f1=-p.f2;q.a2=-p.a1;q.f2=-p.f1;q.l1=-p.l2;q.s1=-p.s2;q.l2=-p.l1;q.s2=-p.s1;}
+ else{q.a1=-p.a1;q.f1=-p.f1;q.a2=-p.a2;q.f2=-p.f2;q.l1=-p.l1;q.s1=-p.s1;q.l2=-p.l2;q.s2=-p.s2;}
+ if(p.bx!=null)q.bx=300-p.bx;
+ return q;
+}
+const CH={a1:22,f1:150,a2:28,f2:150};
+const H={a1:-20,f1:40,a2:-15,f2:45};
+const FC={a1:30,f1:-70,a2:-30,f2:70};
+const shW={l1:26,s1:8,l2:-26,s2:-8,y:186,a1:30,f1:-30,a2:-30,f2:30};
+const shN={l1:8,s1:2,l2:-8,s2:-2,y:182,a1:30,f1:-30,a2:-30,f2:30};
+const bwW={l1:20,s1:4,l2:-20,s2:-4,y:183,a1:35,f1:-50,a2:-35,f2:50};
+const bwN={l1:10,s1:0,l2:-10,s2:0,y:181,a1:35,f1:-50,a2:-35,f2:50};
+const DB={x:170,y:250,t:-90,a1:180,f1:180,a2:176,f2:176,l1:180,s1:90,l2:176,s2:86};
+const sq={x:140,y:220,t:35,l1:75,s1:-41,l2:72,s2:-44,a1:88,f1:90,a2:84,f2:88};
+const LUNGE_L=f({...FC,x:122,y:196,t:-6,l2:-55,s2:-5,l1:38,s1:38});
+const STH={a1:35,f1:-50,a2:-35,f2:50};
+const STN=f({...STH,y:182,l1:8,s1:-8,l2:2,s2:-40});
+const STA=f({...STH,y:186.5,l1:25,s1:-25,l2:8,s2:-35,tap:0});
+const STO=f({...STH,y:186.5,l1:25,s1:-25,l2:-25,s2:-25,tap:1});
+const STB=f({...STH,y:186.5,l1:25,s1:-25,l2:-5,s2:45,tap:2});
+const STX=f({...STH,y:186.5,l1:25,s1:-25,l2:25,s2:25,tap:3});
+const MID={l1:5,s1:5,l2:5,s2:5,a1:0,f1:30,a2:0,f2:30};
+const bwFrames=[];for(let k=0;k<10;k++){bwFrames.push(f({...bwN,x:105+9*k}));bwFrames.push(f({...bwW,x:109.5+9*k}));}bwFrames.push(f({...bwN,x:195}));
+
+const AN={
+ march:{ms:1100,frames:[s({l1:85,s1:0,l2:0,s2:0,a1:-30,f1:70,a2:30,f2:120}),s(MID),s({l2:85,s2:0,l1:0,s1:0,a1:30,f1:120,a2:-30,f2:70}),s(MID)]},
+ armF:{ms:1500,linear:true,noloop:true,frames:[0,90,180,270,360].map(a=>s({a1:a,f1:a,a2:a+12,f2:a+12}))},
+ armB:{ms:1500,linear:true,noloop:true,frames:[360,270,180,90,0].map(a=>s({a1:a,f1:a,a2:a+12,f2:a+12}))},
+ legswing:{ms:1500,props:{wall:212},frames:[s({a1:82,f1:86,a2:-10,f2:-10,l2:0,s2:0,l1:-35,s1:-38}),s({a1:82,f1:86,a2:-10,f2:-10,l2:0,s2:0,l1:60,s1:55})]},
+ bear:{ms:900,frames:[s({x:130,y:192,t:100,a1:30,f1:26,a2:14,f2:16,l1:-26,s1:-30,l2:-38,s2:-36}),s({x:130,y:192,t:100,a1:14,f1:16,a2:30,f2:26,l1:-38,s1:-36,l2:-26,s2:-30})]},
+ crab:{ms:900,frames:[s({x:150,y:215,t:-75,a1:-12,f1:-12,a2:-20,f2:-20,l1:100,s1:0,l2:108,s2:-6}),s({x:150,y:212,t:-75,a1:-16,f1:-16,a2:-14,f2:-14,l1:108,s1:-6,l2:100,s2:0})]},
+ onefoot:{ms:1600,frames:[s({l1:88,s1:-2,l2:0,s2:0,a1:70,f1:75,a2:-50,f2:-45,t:-2}),s({l1:85,s1:2,l2:0,s2:0,a1:66,f1:72,a2:-46,f2:-48,t:2})]},
+ leglift:{ms:3500,frames:[s(CH),s({...CH,l1:95,s1:4,l2:0,s2:0,t:-6,y:178}),s({...CH,l1:95,s1:4,l2:0,s2:0,t:-6,y:178}),s(CH)]},
+ toss:{ms:2200,props:{front:true},frames:[f({...FC,bx:150,by:152}),f({a1:160,f1:-165,a2:-160,f2:165,bx:150,by:60}),f({...FC,bx:150,by:46}),f({a1:150,f1:-160,a2:-150,f2:160,bx:150,by:64})]},
+ balloon:{ms:2400,props:{front:true,balloon:true},frames:[f({a1:150,f1:165,a2:-20,f2:-20,bx:180,by:54}),f({a1:20,f1:10,a2:-20,f2:-10,bx:150,by:46}),f({a1:20,f1:20,a2:-150,f2:-165,bx:120,by:54}),f({a1:20,f1:10,a2:-20,f2:-10,bx:150,by:46})]},
+ star:{ms:10000,rpc:4,props:{front:true,star:true},frames:[STN,STA,STN,STO,STN,STB,STN,STX]},
+ clockF:{ms:2500,rpc:2,frames:[s(H),s({...H,x:162,y:212,l1:80,s1:-2,l2:-38,s2:-78}),s(H),s({...H,x:162,y:212,l2:80,s2:-2,l1:-38,s1:-78})]},
+ clockB:{ms:2500,rpc:2,frames:[s(H),s({...H,x:138,y:212,l1:-40,s1:-78,l2:70,s2:-37}),s(H),s({...H,x:138,y:212,l2:-40,s2:-78,l1:70,s1:-37})]},
+ clockS:{ms:2500,props:{front:true},frames:[f(FC),LUNGE_L]},
+ sidelunge:{ms:2000,rpc:2,props:{front:true},frames:[f(FC),LUNGE_L,f(FC),mir(LUNGE_L,true)]},
+ shuffle:{ms:2800,props:{front:true},frames:[100,130,160,190,220,190,160,130].map((x,i)=>f({...(i%2?shN:shW),x}))},
+ rot:{ms:2000,props:{front:true,band:{hand:1,anchor:[28,140]},door:28},frames:[f({y:178,t:-6,a1:-70,f1:-75,a2:-80,f2:-85,l1:10,s1:5,l2:-10,s2:-5}),f({y:178,t:6,a1:80,f1:85,a2:70,f2:75,l1:10,s1:5,l2:-10,s2:-5})]},
+ pull:{ms:2500,props:{front:true,band:'hands'},frames:[f({a1:60,f1:-100,a2:-60,f2:100}),f({a1:90,f1:90,a2:-90,f2:-90})]},
+ ext:{ms:2500,props:{front:true,band:{hand:1,anchor:[28,152]},door:28},frames:[f({a1:4,f1:-85,a2:-12,f2:-8}),f({a1:4,f1:85,a2:-12,f2:-8})]},
+ int:{ms:2500,props:{front:true,band:{hand:1,anchor:[272,152]},door:272},frames:[f({a1:4,f1:85,a2:-12,f2:-8}),f({a1:4,f1:-85,a2:-12,f2:-8})]},
+ Y:{ms:2500,props:{front:true,band:'hands'},frames:[f({a1:20,f1:20,a2:-20,f2:-20}),f({a1:150,f1:152,a2:-150,f2:-152})]},
+ T:{ms:2500,props:{front:true,band:'hands'},frames:[f({a1:20,f1:20,a2:-20,f2:-20}),f({a1:90,f1:90,a2:-90,f2:-90})]},
+ bandwalk:{ms:15000,rpc:10,noloop:true,props:{front:true,band:'knees'},frames:bwFrames},
+ squat:{ms:2000,frames:[s({a1:88,f1:90,a2:84,f2:88}),s(sq)]},
+ plank:{ms:2000,frames:[s({x:120,y:226,t:90,a1:0,f1:90,a2:2,f2:88,l1:-68,s1:-68,l2:-70,s2:-70}),s({x:120,y:224,t:90,a1:0,f1:90,a2:2,f2:88,l1:-68,s1:-68,l2:-70,s2:-70})]},
+ rest:{ms:3000,frames:[s({}),s({y:181})]},
+ deadbug:{ms:7000,rpc:2,frames:[{...DB},{...DB,a1:265,f1:265,l2:100,s2:100},{...DB},{...DB,a2:265,f2:265,l1:100,s1:100}]},
+ pitch:{ms:2500,props:{towel:true},frames:[
+  s(CH),s({...CH,l1:95,s1:4,l2:0,s2:0,t:-8}),
+  s({x:165,y:196,t:-4,l1:55,s1:-5,l2:-45,s2:-20,a1:-115,f1:-170,a2:85,f2:80}),
+  s({x:175,y:196,t:30,l1:50,s1:-8,l2:-50,s2:-25,a1:75,f1:65,a2:-10,f2:10}),
+  s({x:180,y:194,t:45,l1:45,s1:-10,l2:-60,s2:-10,a1:-10,f1:-20,a2:-20,f2:-10})]},
+ swing:{ms:2000,props:{bat:true},frames:[
+  s({y:183,l1:16,s1:14,l2:-16,s2:-14,a1:-40,f1:160,a2:-30,f2:165}),
+  s({x:154,y:184,t:-4,l1:24,s1:20,l2:-18,s2:-16,a1:-45,f1:165,a2:-35,f2:168}),
+  s({x:156,y:185,t:8,l1:24,s1:20,l2:-18,s2:-10,a1:80,f1:92,a2:75,f2:90}),
+  s({x:156,y:185,t:-4,l1:24,s1:20,l2:-8,s2:-4,a1:150,f1:-150,a2:140,f2:-160})]},
+ cross:{ms:3000,props:{front:true},frames:[f({a1:-72,f1:-82,a2:20,f2:-120}),f({a1:-74,f1:-84,a2:20,f2:-122,y:181})]},
+ quad:{ms:3000,frames:[s({l1:0,s1:-165,l2:0,s2:0,a1:-15,f1:-10,a2:80,f2:82}),s({l1:0,s1:-165,l2:0,s2:0,a1:-15,f1:-10,a2:76,f2:80})]},
+ ham:{ms:3000,frames:[s({y:194,t:50,l1:35,s1:35,l2:-40,s2:25,a1:-10,f1:-25,a2:-6,f2:-20}),s({y:194,t:54,l1:35,s1:35,l2:-40,s2:25,a1:-8,f1:-22,a2:-4,f2:-18})]},
+ calf:{ms:3000,props:{wall:221},frames:[s({x:140,y:186,t:18,l1:35,s1:-15,l2:-24,s2:-24,a1:85,f1:85,a2:80,f2:83}),s({x:140,y:186,t:21,l1:37,s1:-15,l2:-24,s2:-24,a1:84,f1:85,a2:79,f2:83})]}
+};
+for(const k in AN){const a=AN[k];a._f=a.noloop?a.frames:[...a.frames,a.frames[0]];a.rpc=a.rpc||1;}
+
+/* ================= 그림 ================= */
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id),svg=$('fig');
+function mk(tag,at,parent=svg){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);parent.appendChild(e);return e;}
+const NEAR='#f6f1e7',FAR='#8ea3c0',G={};
+mk('rect',{x:-60,y:260,width:420,height:80,fill:'#17352c'});
+mk('line',{x1:-60,y1:260,x2:360,y2:260,stroke:'#2f6b52','stroke-width':2});
+G.wall=mk('rect',{x:0,y:20,width:14,height:240,fill:'#2a4468',rx:3});
+G.door=mk('rect',{x:0,y:50,width:16,height:210,fill:'#6b4a2b',rx:2});
+G.knob=mk('circle',{cx:0,cy:152,r:4,fill:'#d9b67a'});
+const limb=(c,w)=>mk('polyline',{fill:'none',stroke:c,'stroke-width':w,'stroke-linecap':'round','stroke-linejoin':'round'});
+G.leg2=limb(FAR,11);G.arm2=limb(FAR,10);G.torso=limb('#4f8cff',17);
+G.head=mk('circle',{r:13,fill:NEAR});G.cap=mk('path',{fill:'#e63946'});
+G.brim=mk('line',{stroke:'#e63946','stroke-width':4,'stroke-linecap':'round'});
+G.leg1=limb(NEAR,11);G.arm1=limb(NEAR,10);
+G.prop=mk('line',{'stroke-linecap':'round'});
+G.band=mk('line',{stroke:'#ff9f1c','stroke-width':4,'stroke-linecap':'round'});
+G.ball=mk('circle',{r:7,fill:'#fff',stroke:'#e63946','stroke-width':1.6});
+G.star=mk('g',{});
+mk('rect',{x:214,y:44,width:72,height:72,rx:12,fill:'rgba(5,10,20,.55)'},G.star);
+G.sc=mk('circle',{cx:250,cy:80,r:6,fill:'#4f8cff'},G.star);
+G.sd=[[250,56,'앞'],[226,80,'옆'],[250,104,'뒤'],[274,80,'옆']].map(([x,y,t])=>{const c=mk('circle',{cx:x,cy:y,r:7,fill:'#24395a'},G.star);const tx=mk('text',{x:x,y:y+3.2,'text-anchor':'middle','font-size':8,'font-weight':700,fill:'#9db0c9'},G.star);tx.textContent=t;return [c,tx];});
+function showStar(m,ti){vis(G.star,1);
+ const pos=[[250,56],[m?274:226,80],[250,104],[m?226:274,80]];
+ G.sd.forEach(([c,tx],k)=>{c.setAttribute('cx',pos[k][0]);c.setAttribute('cy',pos[k][1]);tx.setAttribute('x',pos[k][0]);tx.setAttribute('y',pos[k][1]+3.2);const on=k===ti;c.setAttribute('fill',on?'#ffd166':'#24395a');tx.setAttribute('fill',on?'#1a1a1a':'#9db0c9');});
+ G.sc.setAttribute('cx',250);}
+const vis=(e,on)=>e.setAttribute('visibility',on?'visible':'hidden');
+function lerp(a,b,u){const r={};for(const k in a)r[k]=(b[k]!=null&&a[k]!=null)?a[k]+(b[k]-a[k])*u:a[k];for(const k in b)if(r[k]==null)r[k]=b[k];return r;}
+function render(p,props,front,mirror){
+ const r=Math.PI/180,v=a=>[Math.sin(a*r),Math.cos(a*r)];
+ const td=[Math.sin(p.t*r),-Math.cos(p.t*r)],pp=[-td[1],td[0]];
+ const off=(o,d,k)=>[o[0]+d[0]*k,o[1]+d[1]*k];
+ const pel=[p.x,p.y],neck=off(pel,td,58),hc=off(pel,td,77);
+ const sw=front?15:0,hw=front?9:0;
+ const sh1=off(neck,pp,sw),sh2=off(neck,pp,-sw),hp1=off(pel,pp,hw),hp2=off(pel,pp,-hw);
+ const sg=(o,a,L)=>off(o,v(a),L);
+ const e1=sg(sh1,p.a1,32),h1=sg(e1,p.f1,30),e2=sg(sh2,p.a2,32),h2=sg(e2,p.f2,30);
+ const k1=sg(hp1,p.l1,40),t1=sg(k1,p.s1,41),k2=sg(hp2,p.l2,40),t2=sg(k2,p.s2,41);
+ const pts=a=>a.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');
+ G.arm1.setAttribute('points',pts([sh1,e1,h1]));G.arm2.setAttribute('points',pts([sh2,e2,h2]));
+ G.leg1.setAttribute('points',pts([hp1,k1,t1]));G.leg2.setAttribute('points',pts([hp2,k2,t2]));
+ G.torso.setAttribute('points',pts([off(pel,td,4),off(neck,td,-2)]));
+ G.torso.setAttribute('stroke-width',front?26:17);
+ const fc=front?NEAR:FAR;G.arm2.setAttribute('stroke',fc);G.leg2.setAttribute('stroke',fc);
+ G.head.setAttribute('cx',hc[0]);G.head.setAttribute('cy',hc[1]);
+ const fw=(!front&&mirror)?[-pp[0],-pp[1]]:pp;
+ const A=off(hc,fw,-13.6),B=off(hc,fw,13.6),cr=fw[0]*td[1]-fw[1]*td[0];
+ G.cap.setAttribute('d',`M${A[0]} ${A[1]} A13.6 13.6 0 0 ${cr<0?1:0} ${B[0]} ${B[1]} Z`);
+ if(!front){const b2=off(B,fw,11);G.brim.setAttribute('x1',B[0]);G.brim.setAttribute('y1',B[1]);G.brim.setAttribute('x2',b2[0]);G.brim.setAttribute('y2',b2[1]);vis(G.brim,1);}else vis(G.brim,0);
+ if(props.towel||props.bat){const L=props.bat?58:26,e=sg(h1,p.f1,L);
+  G.prop.setAttribute('x1',h1[0]);G.prop.setAttribute('y1',h1[1]);G.prop.setAttribute('x2',e[0]);G.prop.setAttribute('y2',e[1]);
+  G.prop.setAttribute('stroke',props.bat?'#c68b59':'#bde0fe');G.prop.setAttribute('stroke-width',props.bat?7:6);vis(G.prop,1);}else vis(G.prop,0);
+ let b1=null,b2=null;
+ if(props.band==='hands'){b1=h1;b2=h2}else if(props.band==='knees'){b1=k1;b2=k2}
+ else if(props.band&&typeof props.band==='object'){let hand=props.band.hand;if(mirror&&front)hand=3-hand;b1=hand===1?h1:h2;const an=props.band.anchor;b2=mirror?[300-an[0],an[1]]:an;}
+ if(b1){G.band.setAttribute('x1',b1[0]);G.band.setAttribute('y1',b1[1]);G.band.setAttribute('x2',b2[0]);G.band.setAttribute('y2',b2[1]);vis(G.band,1)}else vis(G.band,0);
+ if(p.bx!=null){G.ball.setAttribute('cx',p.bx);G.ball.setAttribute('cy',p.by);
+  if(props.balloon){G.ball.setAttribute('r',14);G.ball.setAttribute('fill','#ff6b9d');G.ball.setAttribute('stroke','#ffb3cc');}
+  else{G.ball.setAttribute('r',7);G.ball.setAttribute('fill','#fff');G.ball.setAttribute('stroke','#e63946');}
+  vis(G.ball,1)}else vis(G.ball,0);
+ if(props.wall){const x=mirror?300-props.wall-14:props.wall;G.wall.setAttribute('x',x);vis(G.wall,1)}else vis(G.wall,0);
+ if(props.door){const x=mirror?300-props.door:props.door;G.door.setAttribute('x',x-8);G.knob.setAttribute('cx',x);vis(G.door,1);vis(G.knob,1)}else{vis(G.door,0);vis(G.knob,0)}
+}
+function drawAnim(name,phase){
+ let mirror=false;if(name.endsWith('|m')){mirror=true;name=name.slice(0,-2);}
+ const A=AN[name],props=A.props||{},front=!!props.front,fr=A._f,n=fr.length-1;
+ const pos=Math.max(0,Math.min(.99999,phase))*n,i=Math.min(n-1,Math.floor(pos));let u=pos-i;
+ if(!A.linear)u=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+ let p=lerp(fr[i],fr[i+1],u);
+ if(mirror)p=mir(p,front);
+ render(p,props,front,mirror);
+}
+
+/* ================= 소리 ================= */
+let ac=null,sound=true,koVoice=null;
+function audio(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){}}
+function tone(fq,d,vol,type){if(!sound||!ac)return;try{const o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.value=fq;o.connect(g);g.connect(ac.destination);const t=ac.currentTime;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.03);}catch(e){}}
+const beep=(fq=880,d=.15)=>tone(fq,d,.32);
+const tick=()=>tone(2400,.03,.12,'square');
+function pickVoice(){try{const vs=speechSynthesis.getVoices();koVoice=vs.find(v=>/^ko/i.test(v.lang))||null;}catch(e){}}
+try{speechSynthesis.onvoiceschanged=pickVoice;pickVoice();}catch(e){}
+function say(txt,cancel){if(!sound)return;try{const sy=window.speechSynthesis;if(!sy)return;if(cancel)sy.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='ko-KR';if(koVoice)u.voice=koVoice;u.rate=1.05;sy.speak(u);}catch(e){}}
+function hush(){try{speechSynthesis.cancel()}catch(e){}}
+
+/* ================= 진행 ================= */
+let si=0,el=0,running=false,started=false,finished=false,pre=0,lastTs=0,animClock=0,events=[],ep=0,game=null,wake=null;
+const fmt=sec=>{sec=Math.max(0,Math.ceil(sec-1e-6));return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');};
+function flash(txt){const b=$('banner');b.textContent=txt;b.classList.remove('hide','pop');void b.offsetWidth;b.classList.add('pop');}
+function hideBanner(){$('banner').classList.add('hide');}
+
+function buildEvents(sg){
+ const ev=[],st=STEPS[sg.i];game=null;
+ if(sg.kind==='rest'){
+  ev.push({t:0,f:()=>{hideBanner();say('쉬는 시간. 다음은 '+st.name,true);}});
+  [7,8,9].forEach(t=>ev.push({t,f:()=>beep(660,.12)}));
+ }else if(st.type==='time'){
+  let a=0;st.ph.forEach((p,k)=>{const lab=p[2],t0=a;ev.push({t:t0,f:()=>{if(lab)flash(lab);else hideBanner();if(k===0)say(st.name+' 시작!',true);else{beep(880,.2);say(lab);}}});a+=p[0];});
+  for(let t=1;t<sg.dur;t++)ev.push({t,f:t%10===0?()=>beep(1000,.18):tick});
+ }else if(st.type==='count'){
+  st._b.forEach((b,k)=>{
+   const ls=k===0?0:b.start-st.beat;
+   ev.push({t:ls,f:()=>{if(b.label)flash(b.label);else hideBanner();if(k===0)say(b.label?st.name+'. '+b.label:st.name+' 시작!',true);else{beep(880,.2);say(b.label);}}});
+   for(let r=0;r<b.n;r++)ev.push({t:b.start+(r+.5)*st.tempo,f:()=>say(b.words?b.words[r%b.words.length]:NUM[r])});
+  });
+  if(sg.dur-st._done>1)ev.push({t:st._done+.4,f:()=>{flash('끝! 잠깐 쉬어요');say('끝!');}});
+ }else if(st.type==='strike'){
+  const P=[];let t=1.2;
+  while(t+3.9<sg.dur){P.push({t,strike:Math.random()<.6});t+=3.85+1.5+Math.random()*1.5;}
+  game={kind:'strike',P};
+  ev.push({t:0,f:()=>{hideBanner();say(st.name+' 시작!',true);}});
+  P.forEach(p=>ev.push({t:p.t,f:()=>tone(1500,.05,.25,'square')}));
+ }else if(st.type==='dir'){
+  const D=[],dirs=['앞','뒤','왼쪽','오른쪽'];let t=1.5,last='';
+  while(t+1<sg.dur){const d=dirs[Math.floor(Math.random()*4)];D.push({t,d});t+=2+Math.random()*2;}
+  game={kind:'dir',D};
+  ev.push({t:0,f:()=>{hideBanner();say(st.name+' 시작!',true);}});
+  D.forEach(p=>ev.push({t:p.t,f:()=>beep(1000,.12)}));
+ }
+ ev.sort((a,b)=>a.t-b.t);return ev;
+}
+function enter(i){
+ si=Math.max(0,Math.min(SEGS.length-1,i));el=0;events=buildEvents(SEGS[si]);ep=0;animClock=0;
+ renderInfo();
+}
+function gotoStep(stepIdx){const k=SEGS.findIndex(sg=>sg.kind==='step'&&sg.i===stepIdx);enter(k);}
+
+function renderInfo(){
+ const sg=SEGS[si],st=STEPS[sg.i],sec=SECS[st.s],rest=sg.kind==='rest';
+ $('chip').textContent=rest?'⏸ 쉬는 시간':sec.k+' '+sec.n;$('chip').style.color=rest?'#ff9f1c':sec.c;
+ $('count').textContent=(sg.i+1)+' / '+STEPS.length;
+ $('name').textContent=rest?'쉬는 시간 10초':st.name;
+ $('reps').textContent=rest?'다음: '+st.name:st.reps;
+ $('desc').textContent=rest?st.reps+' · '+st.desc:st.desc;
+ const v=$('video');if(st.link){v.href=YT(st.link);$('vTitle').textContent=rest?'다음 운동 영상 보기':'동작 영상 보기';v.classList.add('on');}else v.classList.remove('on');
+ const nx=rest?STEPS[sg.i+1]:STEPS[sg.i+1];
+ $('next').innerHTML=rest?'':(nx?'다음: <b>'+nx.name+'</b>':'<b>마지막 운동이에요!</b>');
+ $('tag').classList.toggle('on',rest);
+ $('playBtn').textContent=running?'⏸ 일시정지':(started?'▶ 계속':'▶ 시작');
+ document.querySelectorAll('#stepList .srow').forEach((r,i)=>r.classList.toggle('cur',i===sg.i));
+ const isGame=!rest&&(st.type==='strike'||st.type==='dir');
+ $('strike').classList.toggle('on',isGame&&st.type==='strike');
+ $('dir').classList.toggle('on',isGame&&st.type==='dir');
+ svg.style.visibility=isGame?'hidden':'visible';
+ if(isGame)hideBanner();
+}
+function curPhaseLabel(st){
+ if(st.type==='time'){let a=0;for(const p of st.ph){a+=p[0];if(el<a)return p[2]||'';}return '';}
+ if(st.type==='count'){for(let k=0;k<st._b.length;k++){const b=st._b[k];if(el<b.end)return b.label||'';}return '끝! 잠깐 쉬어요';}
+ return '';
+}
+function drawStage(){
+ const sg=SEGS[si],st=STEPS[sg.i];
+ vis(G.star,0);
+ const ctr=$('counter');ctr.classList.remove('on');
+ if(!started){drawAnim('march',(animClock%1100)/1100);return;}
+ if(sg.kind==='rest'){
+  const nm=st.type==='time'?st.ph[0][1]:st.type==='count'?st.blocks[0].anim:null;
+  if(nm){const A=AN[nm.replace('|m','')];drawAnim(nm,((animClock/ (A.ms))%1));}else drawAnim('rest',(animClock%3000)/3000);
+  return;
+ }
+ if(st.type==='time'){let a=0,nm=st.ph[0][1];for(const p of st.ph){if(el<a+p[0]){nm=p[1];break;}a+=p[0];nm=p[1];}
+  const A=AN[nm.replace('|m','')];drawAnim(nm,(animClock%A.ms)/A.ms);return;}
+ if(st.type==='count'){
+  let b=null,k=0;for(;k<st._b.length;k++){if(el<st._b[k].end){b=st._b[k];break;}}
+  if(!b){const lb=st._b[st._b.length-1];drawAnim(lb.anim,0);return;}
+  const A=AN[b.anim.replace('|m','')];
+  if(el<b.start){drawAnim(b.anim,0);return;}
+  const rel=el-b.start;drawAnim(b.anim,(rel/(st.tempo*A.rpc))%1);
+  if(b.per){const rd=Math.min(b.n/b.per,Math.floor(rel/(st.tempo*b.per))+1);$('cNow').textContent=rd;$('cOf').textContent=' / '+(b.n/b.per)+' 바퀴';
+   const ti=Math.floor(rel/st.tempo)%b.per,inTap=((rel/st.tempo)%1)>.25&&((rel/st.tempo)%1)<.75;showStar(b.anim.endsWith('|m'),inTap?ti:-1);}
+  else{const shown=Math.min(b.n,Math.floor(rel/st.tempo+.5));$('cNow').textContent=shown;$('cOf').textContent=' / '+b.n;}
+  ctr.classList.add('on');
+  return;
+ }
+ if(game&&game.kind==='strike'){
+  let col=null,txt='',tcol='';
+  for(const p of game.P){const d=el-p.t;if(d<0||d>3.85)continue;
+   if(d<.15)col='#2f6bff';else if(d<.85)col=null;else if(d<.95)col=p.strike?'#22c55e':'#ef4444';else if(d<2.85)col=null;else{txt=p.strike?'스트라이크':'볼';tcol=p.strike?'#4ade80':'#f87171';}}
+  const L=$('sLight');L.style.opacity=col?1:0;if(col)L.style.background=col;
+  const T=$('sText');T.style.opacity=txt?1:0;T.textContent=txt;T.style.color=tcol;
+ }
+ if(game&&game.kind==='dir'){
+  let lit=null;for(const p of game.D){if(el>=p.t&&el<p.t+.2){lit=p.d;break;}}
+  document.querySelectorAll('#dir .cell[data-d]').forEach(c=>c.classList.toggle('lit',c.dataset.d===lit));
+ }
+}
+function finish(){
+ running=false;finished=true;beep(1046,.3);setTimeout(()=>beep(1318,.4),250);say('오늘 운동 끝! 정말 잘했어요.',true);
+ let n=null;try{const k='bbr-week',now=new Date(),wk=now.getFullYear()+'-'+Math.floor((now-new Date(now.getFullYear(),0,1))/604800000);const d=JSON.parse(localStorage.getItem(k)||'{}');d[wk]=(d[wk]||0)+1;localStorage.setItem(k,JSON.stringify(d));n=d[wk];}catch(e){}
+ $('endMsg').textContent=n?`30분 동안 정말 잘했어요. 이번 주 ${n}번째 완료!`:'30분 동안 정말 잘했어요.';
+ $('endOv').classList.add('on');renderInfo();
+}
+function loop(ts){
+ const dt=lastTs?Math.min(.1,(ts-lastTs)/1000):0;lastTs=ts;
+ if(running&&pre>0){
+  const b=Math.ceil(pre);pre-=dt;const a=Math.ceil(pre);$('cdN').textContent=Math.max(1,a);
+  if(a!==b&&a>0)beep(660,.12);
+  if(pre<=0){pre=0;$('cd').classList.remove('on');beep(1046,.25);enter(0);}
+ }else if(running&&!finished){
+  el+=dt;
+  while(ep<events.length&&events[ep].t<=el){events[ep].f();ep++;}
+  if(el>=SEGS[si].dur){if(si<SEGS.length-1){if(SEGS[si].kind==='rest')beep(1046,.25);enter(si+1);}else finish();}
+ }
+ if((running&&pre<=0)||!started)animClock+=dt*1000;
+ drawStage();
+ if(started){
+  const sg=SEGS[si],rem=Math.max(0,sg.dur-el);
+  $('tt').textContent=fmt(rem);
+  $('ringFg').setAttribute('stroke-dashoffset',(439.82*(1-rem/sg.dur)).toFixed(1));
+  $('ringFg').setAttribute('stroke',sg.kind==='rest'?'#ff9f1c':'#2ec4b6');
+  $('phase').textContent=sg.kind==='rest'?'':curPhaseLabel(STEPS[sg.i]);
+  const done=sg.start+Math.min(el,sg.dur);
+  $('fill').style.width=(done/TOTAL*100)+'%';
+  $('elapsed').textContent=fmt(done)+' 진행';$('remain').textContent=fmt(TOTAL-done)+' 남음';
+ }
+ requestAnimationFrame(loop);
+}
+async function keepAwake(){try{if('wakeLock' in navigator&&!wake){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>wake=null);}}catch(e){}}
+function start(){
+ audio();started=true;finished=false;running=true;pre=5;si=0;el=0;events=[];ep=0;
+ $('startOv').classList.remove('on');$('cd').classList.add('on');$('cdN').textContent='5';
+ renderInfo();say('준비하세요! 첫 번째 운동은 '+STEPS[0].name+'입니다.',true);keepAwake();
+}
+function setRunning(r){running=r;if(!r){hush();}else keepAwake();renderInfo();}
+function toggle(){audio();if(!started){start();return;}if(finished)return;setRunning(!running);}
+function skipPre(){pre=0;$('cd').classList.remove('on');}
+
+/* ================= 목록·버튼 ================= */
+SECS.forEach((sc,i)=>{
+ const t=SEGS.filter(sg=>STEPS[sg.i].s===i).reduce((a,sg)=>a+sg.dur,0);
+ const row=document.createElement('div');row.className='srow';
+ row.innerHTML=`<span class="dot" style="background:${sc.c}"></span><span>${sc.k} ${sc.n}</span><span class="m">약 ${Math.round(t/60*2)/2}분</span>`;
+ $('secList').appendChild(row);
+ const seg=document.createElement('div');seg.className='seg';seg.style.width=(t/TOTAL*100)+'%';seg.style.background=sc.c;$('bar').insertBefore(seg,$('fill'));
+});
+let lastSec=-1;
+STEPS.forEach((st,i)=>{
+ if(st.s!==lastSec){lastSec=st.s;const h=document.createElement('div');h.className='sub2';h.style.color=SECS[st.s].c;h.textContent=SECS[st.s].k+' '+SECS[st.s].n;$('stepList').appendChild(h);}
+ const row=document.createElement('div');row.className='srow';
+ row.innerHTML=`<span class="dot" style="background:${SECS[st.s].c}"></span><span>${st.name}</span><span class="m">${fmt(st.dur)}</span>`;
+ row.onclick=()=>{$('listOv').classList.remove('on');audio();if(!started){started=true;$('startOv').classList.remove('on');}finished=false;skipPre();running=true;gotoStep(i);keepAwake();renderInfo();};
+ $('stepList').appendChild(row);
+});
+$('startBtn').onclick=start;
+$('playBtn').onclick=toggle;
+$('prevBtn').onclick=()=>{if(!started)return;skipPre();const sg=SEGS[si];if(sg.kind==='step'&&el>3)enter(si);else gotoStep(Math.max(0,sg.kind==='rest'?sg.i-1:sg.i-1));};
+$('nextBtn').onclick=()=>{if(!started)return;skipPre();const sg=SEGS[si];if(sg.kind==='rest')enter(si+1);else if(sg.i<STEPS.length-1)gotoStep(sg.i+1);};
+$('video').addEventListener('click',()=>{if(running)setRunning(false);});
+$('soundBtn').onclick=()=>{audio();sound=!sound;$('soundBtn').textContent=sound?'🔊 소리 켬':'🔇 소리 끔';if(!sound)hush();};
+$('listBtn').onclick=()=>{renderInfo();$('listOv').classList.add('on');};
+$('closeList').onclick=()=>$('listOv').classList.remove('on');
+$('againBtn').onclick=()=>{$('endOv').classList.remove('on');start();};
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();toggle();}if(e.code==='ArrowRight')$('nextBtn').click();if(e.code==='ArrowLeft')$('prevBtn').click();});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&running)keepAwake();});
+
+enter(0);$('tt').textContent=fmt(SEGS[0].dur);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

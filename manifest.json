@@ -1,0 +1,9 @@
+{
+  "name": "야구 아침 30분 루틴",
+  "short_name": "야구 루틴",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0d1828",
+  "theme_color": "#0d1828",
+  "icons": [{"src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}]
+}
