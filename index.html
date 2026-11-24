@@ -103,6 +103,33 @@ header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
  .panel{padding:14px 16px}
  .desc{font-size:15px}
 }
+@media (max-width:600px){
+ .app{padding:10px;gap:8px}
+ header{flex-wrap:nowrap;gap:6px}.logo{font-size:16px;white-space:nowrap}.hbtn{padding:7px 9px;font-size:12px;white-space:nowrap}
+ .main{grid-template-rows:minmax(0,1fr) auto;gap:8px}
+ .panel{padding:10px 14px;gap:4px;border-radius:18px}.stage{border-radius:18px}
+ .chip{font-size:12px;padding:4px 10px}.count{font-size:12px}
+ .name{font-size:23px}.reps{font-size:17px}
+ .desc{font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .video{padding:7px 10px;border-radius:14px;gap:10px}.video .yt{width:38px;height:28px;border-radius:9px}.video .yt i{border-left-width:11px;border-top-width:7px;border-bottom-width:7px}.video span{display:none}.video b{font-size:14px}
+ .timerrow{gap:12px;padding-top:2px}.ring{width:78px}.ring .tt{font-size:22px}.phase{font-size:16px}.next{font-size:13px}
+ .controls{margin-top:4px;gap:8px}.controls button{height:48px;font-size:15px;border-radius:14px}.controls button.main-btn{font-size:16px}
+ .counter .c{font-size:54px}.counter .o{font-size:20px}.banner{font-size:18px;padding:6px 16px;top:10px}
+ .ptext{font-size:12px}.bar{height:10px}
+}
+@media (max-height:520px) and (orientation:landscape){
+ .app{padding:8px 12px;gap:6px}
+ header .logo{font-size:15px}.hbtn{padding:6px 9px;font-size:12px}
+ .main{grid-template-columns:1.2fr 1fr;grid-template-rows:none;gap:8px}
+ .panel{padding:10px 14px;gap:3px;overflow:auto;border-radius:16px}.stage{border-radius:16px}
+ .chip{font-size:12px;padding:3px 9px}.count{font-size:12px}
+ .name{font-size:21px}.reps{font-size:15px}.desc{display:none}
+ .video{padding:6px 10px;border-radius:12px;gap:8px;margin-top:2px}.video .yt{width:34px;height:24px;border-radius:8px}.video .yt i{border-left-width:10px;border-top-width:6px;border-bottom-width:6px}.video span{display:none}.video b{font-size:13px}
+ .timerrow{gap:10px;padding-top:0}.ring{width:64px}.ring .tt{font-size:18px}.phase{font-size:14px}.next{font-size:12px}
+ .controls{margin-top:4px;gap:6px}.controls button{height:42px;font-size:14px;border-radius:12px}.controls button.main-btn{font-size:15px}
+ .counter .c{font-size:48px}.counter .o{font-size:18px}.banner{font-size:16px;padding:5px 14px;top:8px}
+ .ptext{font-size:11px}.bar{height:8px}.progress{gap:3px}
+}
 </style>
 </head>
 <body>
@@ -162,7 +189,7 @@ header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   <p class="sub">화면 속 친구를 따라 해요. 횟수 운동은 "하나, 둘…" 구령에 맞춰, 시간 운동은 초침 소리에 맞춰 해요. 운동 사이에는 10초씩 쉬어요.</p>
   <div class="slist" id="secList"></div>
   <button class="big" id="startBtn">운동 시작하기</button>
-  <div class="tips">· 밴드는 가장 약한 것으로, 천천히 정확하게 해요.<br>· 아이패드 <b>설정 → 디스플레이 및 밝기 → 자동 잠금 → 안 함</b>으로 두면 화면이 꺼지지 않아요.<br>· 어깨나 팔꿈치가 아프면 바로 멈춰요.</div>
+  <div class="tips">· 밴드는 가장 약한 것으로, 천천히 정확하게 해요.<br>· 아이패드·아이폰 <b>설정 → 디스플레이 및 밝기 → 자동 잠금 → 안 함</b>으로 두면 화면이 꺼지지 않아요.<br>· 어깨나 팔꿈치가 아프면 바로 멈춰요.</div>
  </div>
 </div>
 <div class="overlay" id="listOv">
@@ -188,14 +215,13 @@ const SECS=[
  {k:'④',n:'밴드 어깨 운동',c:'#4f8cff'},{k:'⑤',n:'하체·코어',c:'#2ec4b6'},{k:'⑥',n:'야구 동작',c:'#c77dff'},{k:'⑦',n:'정리 스트레칭',c:'#90be6d'}
 ];
 const STEPS=[
- {s:0,type:'time',name:'제자리 빠르게 걷기',reps:'무릎 높이 들기 · 약 1분',desc:'뛰지 말고 걸어요. 무릎을 배꼽 높이까지 올리고 팔도 크게 흔들어요.',ph:[[56,'march']]},
+ {s:0,type:'time',name:'제자리 빠르게 걷기',reps:'무릎 높이 들기 · 45초',desc:'뛰지 말고 걸어요. "삑" 소리에 맞춰 무릎을 배꼽 높이까지 올리고 팔도 크게 흔들어요.',beepEach:true,ph:[[45,'march']]},
  {s:0,type:'count',name:'팔 크게 돌리기',reps:'앞·뒤 각 10회',desc:'팔을 쭉 펴고 크게 원을 그려요.',tempo:1.5,beat:0,total:30,blocks:[{n:10,anim:'armF',label:'앞으로 돌려요'},{n:10,anim:'armB',label:'뒤로 돌려요'}]},
  {s:0,type:'count',name:'다리 앞뒤 흔들기',reps:'좌우 각 10회',desc:'벽을 한 손으로 잡고 한 발로 서서, 반대 다리를 시계추처럼 앞뒤로 흔들어요.',link:'ogJE4XziR3o',tempo:1.5,beat:1.5,total:31.5,blocks:[{n:10,anim:'legswing',label:'한쪽 다리'},{n:10,anim:'legswing|m',label:'다리 바꿔요'}]},
  {s:0,type:'time',name:'곰 걷기 → 게 걷기',reps:'각 30초',desc:'곰 걷기는 무릎을 바닥에 대지 않고, 게 걷기는 엉덩이를 들고 걸어요.',link:'shorts/q7ZIMTAwIIo',ph:[[30,'bear','곰 걷기'],[30,'crab','게 걷기로!']]},
- {s:1,type:'time',name:'한 발 서기',reps:'좌우 각 30초',desc:'서 있는 다리 무릎을 살짝 굽히고 흔들리지 않게 버텨요.',ph:[[30,'onefoot','한 발로 서요'],[30,'onefoot|m','발 바꿔요!']]},
- {s:1,type:'count',name:'투구 자세로 다리 들고 멈추기',reps:'10회 (2초씩 멈추기)',desc:'글러브 낀 것처럼 손을 가슴에 모으고, 다리를 높이 들어 2초 멈춰요.',link:'MFqnmF9VtZE',tempo:3.5,beat:0,total:40,blocks:[{n:10,anim:'leglift'}]},
+ {s:1,type:'time',name:'한 발 서기',reps:'왼발 → 오른발 × 2번 · 각 30초',desc:'서 있는 다리 무릎을 살짝 굽히고 흔들리지 않게 버텨요.',ph:[[30,'onefoot','왼발로 서요','왼발로 서요'],[30,'onefoot|m','오른발로 서요'],[30,'onefoot','다시 왼발로'],[30,'onefoot|m','다시 오른발로']]},
  {s:1,type:'time',name:'양말 공 토스 → 풍선 튕기기',reps:'각 40초',desc:'양말 공을 위로 던지고 박수 1번 친 뒤 잡아요. 다음엔 풍선을 양손으로 번갈아 튕겨요.',ph:[[40,'toss','양말 공 토스 (박수 1번!)'],[40,'balloon','풍선 튕기기로!']]},
- {s:1,type:'strike',name:'스트라이크·볼 판단 게임',reps:'1분 30초',desc:'파란색이 깜빡이면 투수가 던진 거예요. 초록색이면 스트라이크니까 스윙! 빨간색이면 볼이니까 꾹 참아요.',sec:90},
+ {s:1,type:'react',name:'무릎 꿇고 빠르게 일어나기',reps:'좌우 각 5회 · "삑" 소리에 일어나기',desc:'한쪽 무릎을 꿇고 준비해요. "삑" 소리가 나면 앞다리로 바닥을 밀며 빠르게 일어나고, 뒷다리 무릎을 앞으로 끌어올려 한 발로 2초 멈춰요.',link:'Xq_DhdVGQeM',sec:60},
  {s:1,type:'dir',name:'방향 반응 게임',reps:'1분 45초',desc:'노랗게 켜진 칸 쪽으로 한 걸음 갔다가 가운데로 돌아와요. 위 칸은 뒤, 아래 칸은 앞이에요.',sec:105},
  {s:2,type:'count',name:'별 모양 균형 잡기',reps:'한 발로 서서 앞·옆·뒤·옆 찍기, 좌우 각 5바퀴',desc:'한 발로 서서 무릎을 살짝 굽혀요. 다른 발끝으로 앞, 옆, 뒤, 반대쪽 옆을 살짝 찍고 매번 제자리로 돌아와요. 찍는 발에 체중을 싣지 않아요.',link:'Ow02kvMBbCk',tempo:2.5,beat:2.5,total:107.5,blocks:[{n:20,anim:'star',label:'한쪽 발로 서요',words:['앞','옆','뒤','옆'],per:4},{n:20,anim:'star|m',label:'발 바꿔요',words:['앞','옆','뒤','옆'],per:4}]},
  {s:2,type:'time',name:'좌우 셔플 이동',reps:'20초 × 3세트',desc:'자세를 낮추고 발을 끌듯이 옆으로 빠르게 이동해요. 발이 엇갈리지 않게!',link:'h9s3NYIA85o',ph:[[20,'shuffle','1세트'],[20,'shuffle','2세트'],[20,'shuffle','마지막 세트!']]},
@@ -210,8 +236,7 @@ const STEPS=[
  {s:4,type:'time',name:'플랭크',reps:'40초 버티기',desc:'머리부터 발끝까지 일자! 엉덩이가 처지지 않게 버텨요.',link:'Zq8nRY9P_cM',ph:[[40,'plank','버텨요!']]},
  {s:4,type:'count',name:'데드버그',reps:'좌우 번갈아 각 8회',desc:'허리를 바닥에 붙이고, 반대쪽 팔과 다리를 천천히 뻗어요.',link:'TzE9l0n11Zk',tempo:3.5,beat:0,total:60,blocks:[{n:16,anim:'deadbug'}]},
  {s:5,type:'count',name:'수건 섀도 피칭',reps:'10회',desc:'수건 끝을 잡고 실제처럼 던져요. 앞발이 착지한 뒤 팔을 끝까지 뻗어요.',link:'tN4T96WVeCE',tempo:2.5,beat:0,total:30,blocks:[{n:10,anim:'pitch'}]},
- {s:5,type:'count',name:'섀도 스윙',reps:'10회',desc:'하체부터 돌리고 머리는 공 보듯이 고정해요.',link:'BOAyHWb450w',tempo:2,beat:0,total:30,blocks:[{n:10,anim:'swing'}]},
- {s:6,type:'time',name:'정리 스트레칭',reps:'동작마다 20초',desc:'숨을 천천히 쉬면서 쭉 늘려요. 아프지 않을 만큼만!',ph:[[20,'cross','어깨 (한쪽)'],[20,'cross|m','어깨 (반대쪽)'],[20,'quad','허벅지 앞 (한쪽)'],[20,'quad|m','허벅지 앞 (반대쪽)'],[20,'ham','허벅지 뒤 (한쪽)'],[20,'ham|m','허벅지 뒤 (반대쪽)'],[20,'calf','종아리 (한쪽)'],[20,'calf|m','종아리 (반대쪽)']]}
+ {s:6,type:'time',name:'정리 스트레칭',reps:'동작마다 20~30초',desc:'숨을 천천히 쉬면서 쭉 늘려요. 아프지 않을 만큼만!',ph:[[20,'cross','어깨 (한쪽)','어깨'],[20,'cross|m','어깨 (반대쪽)','반대쪽'],[20,'quad','허벅지 앞 (한쪽)','허벅지 앞'],[20,'quad|m','허벅지 앞 (반대쪽)','반대쪽'],[20,'ham','허벅지 뒤 (한쪽)','허벅지 뒤'],[20,'ham|m','허벅지 뒤 (반대쪽)','반대쪽'],[20,'calf','종아리 (한쪽)','종아리'],[20,'calf|m','종아리 (반대쪽)','반대쪽'],[20,'ninety','앉아서 고관절 (한쪽)','앉아서 고관절'],[20,'ninety|m','앉아서 고관절 (반대쪽)','반대쪽'],[30,'frog','개구리 자세','개구리 자세']]},
 ];
 const NUM=['하나','둘','셋','넷','다섯','여섯','일곱','여덟','아홉','열','열하나','열둘','열셋','열넷','열다섯','열여섯'];
 const REST=10;
@@ -219,7 +244,7 @@ const YT=id=>id.startsWith('shorts/')?'https://www.youtube.com/'+id:'https://www
 
 STEPS.forEach(st=>{
  if(st.type==='time')st.dur=st.ph.reduce((a,p)=>a+p[0],0);
- else if(st.type==='count'){let t=0;st._b=st.blocks.map((b,k)=>{if(k>0)t+=st.beat;const o={...b,start:t,end:t+b.n*st.tempo};t=o.end;return o;});st._done=t;st.dur=st.total;}
+ else if(st.type==='count'){let t=1;st._b=st.blocks.map((b,k)=>{if(k>0)t+=st.beat;const o={...b,start:t,end:t+b.n*st.tempo};t=o.end;return o;});st._done=t;st.dur=Math.max(st.total,t);}
  else st.dur=st.sec;
 });
 const SEGS=[];
@@ -254,6 +279,8 @@ const STA=f({...STH,y:186.5,l1:25,s1:-25,l2:8,s2:-35,tap:0});
 const STO=f({...STH,y:186.5,l1:25,s1:-25,l2:-25,s2:-25,tap:1});
 const STB=f({...STH,y:186.5,l1:25,s1:-25,l2:-5,s2:45,tap:2});
 const STX=f({...STH,y:186.5,l1:25,s1:-25,l2:25,s2:25,tap:3});
+const KN=s({y:217,l1:85,s1:0,l2:0,s2:-88,a1:10,f1:20,a2:-10,f2:-5});
+const UP=s({y:179,l1:0,s1:0,l2:90,s2:0,a1:-40,f1:50,a2:50,f2:140});
 const MID={l1:5,s1:5,l2:5,s2:5,a1:0,f1:30,a2:0,f2:30};
 const bwFrames=[];for(let k=0;k<10;k++){bwFrames.push(f({...bwN,x:105+9*k}));bwFrames.push(f({...bwW,x:109.5+9*k}));}bwFrames.push(f({...bwN,x:195}));
 
@@ -283,6 +310,8 @@ const AN={
  bandwalk:{ms:15000,rpc:10,noloop:true,props:{front:true,band:'knees'},frames:bwFrames},
  squat:{ms:2000,frames:[s({a1:88,f1:90,a2:84,f2:88}),s(sq)]},
  plank:{ms:2000,frames:[s({x:120,y:226,t:90,a1:0,f1:90,a2:2,f2:88,l1:-68,s1:-68,l2:-70,s2:-70}),s({x:120,y:224,t:90,a1:0,f1:90,a2:2,f2:88,l1:-68,s1:-68,l2:-70,s2:-70})]},
+ ninety:{ms:3000,props:{front:true},frames:[f({y:252,t:-20,l2:-92,s2:92,l1:92,s1:92,a1:20,f1:-10,a2:-30,f2:-20}),f({y:252,t:-27,l2:-92,s2:92,l1:92,s1:92,a1:16,f1:-14,a2:-34,f2:-24})]},
+ frog:{ms:3000,frames:[s({x:130,y:222,t:95,a1:0,f1:90,a2:3,f2:88,l1:-10,s1:-90,l2:-14,s2:-92}),s({x:118,y:224,t:100,a1:-10,f1:85,a2:-7,f2:83,l1:-25,s1:-90,l2:-29,s2:-92})]},
  rest:{ms:3000,frames:[s({}),s({y:181})]},
  deadbug:{ms:7000,rpc:2,frames:[{...DB},{...DB,a1:265,f1:265,l2:100,s2:100},{...DB},{...DB,a2:265,f2:265,l1:100,s1:100}]},
  pitch:{ms:2500,props:{towel:true},frames:[
@@ -379,6 +408,7 @@ let ac=null,sound=true,koVoice=null;
 function audio(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){}}
 function tone(fq,d,vol,type){if(!sound||!ac)return;try{const o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.value=fq;o.connect(g);g.connect(ac.destination);const t=ac.currentTime;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.03);}catch(e){}}
 const beep=(fq=880,d=.15)=>tone(fq,d,.32);
+const sharp=()=>{tone(2600,.11,.9,'square');tone(3900,.07,.35,'square');};
 const tick=()=>tone(2400,.03,.12,'square');
 function pickVoice(){try{const vs=speechSynthesis.getVoices();koVoice=vs.find(v=>/^ko/i.test(v.lang))||null;}catch(e){}}
 try{speechSynthesis.onvoiceschanged=pickVoice;pickVoice();}catch(e){}
@@ -397,8 +427,8 @@ function buildEvents(sg){
   ev.push({t:0,f:()=>{hideBanner();say('쉬는 시간. 다음은 '+st.name,true);}});
   [7,8,9].forEach(t=>ev.push({t,f:()=>beep(660,.12)}));
  }else if(st.type==='time'){
-  let a=0;st.ph.forEach((p,k)=>{const lab=p[2],t0=a;ev.push({t:t0,f:()=>{if(lab)flash(lab);else hideBanner();if(k===0)say(st.name+' 시작!',true);else{beep(880,.2);say(lab);}}});a+=p[0];});
-  for(let t=1;t<sg.dur;t++)ev.push({t,f:t%10===0?()=>beep(1000,.18):tick});
+  let a=0;st.ph.forEach((p,k)=>{const lab=p[2],spk=p[3]||lab,t0=a;ev.push({t:t0,f:()=>{if(lab)flash(lab);else hideBanner();if(k===0)say(p[3]?(st.s===6?st.name+'. '+spk:spk):st.name+' 시작!',true);else{beep(880,.2);say(spk);}}});a+=p[0];});
+  for(let t=1;t<sg.dur;t++)ev.push({t,f:st.beepEach?sharp:(t%10===0?()=>beep(1000,.18):tick)});
  }else if(st.type==='count'){
   st._b.forEach((b,k)=>{
    const ls=k===0?0:b.start-st.beat;
@@ -412,6 +442,14 @@ function buildEvents(sg){
   game={kind:'strike',P};
   ev.push({t:0,f:()=>{hideBanner();say(st.name+' 시작!',true);}});
   P.forEach(p=>ev.push({t:p.t,f:()=>tone(1500,.05,.25,'square')}));
+ }else if(st.type==='react'){
+  let R,sw,t;
+  do{R=[];t=.8;sw=0;for(let side=0;side<2;side++){if(side===1){sw=t;t+=2.5;}for(let r=0;r<5;r++){const prep=2+Math.random()*2;R.push({side,r,start:t,fire:t+prep,end:t+prep+2});t+=prep+2;}}}while(t>sg.dur-.5);
+  game={kind:'react',R,sw,done:t};
+  ev.push({t:0,f:()=>{flash('왼 무릎 앉아');say('왼 무릎 앉아',true);}});
+  R.forEach(q=>ev.push({t:q.fire,f:sharp}));
+  ev.push({t:sw,f:()=>{flash('오른 무릎 앉아');beep(880,.2);say('오른 무릎 앉아');}});
+  ev.push({t:t+.2,f:()=>{flash('끝! 잠깐 쉬어요');say('끝!');}});
  }else if(st.type==='dir'){
   const D=[],dirs=['앞','뒤','왼쪽','오른쪽'];let t=1.5,last='';
   while(t+1<sg.dur){const d=dirs[Math.floor(Math.random()*4)];D.push({t,d});t+=2+Math.random()*2;}
@@ -448,6 +486,7 @@ function renderInfo(){
 }
 function curPhaseLabel(st){
  if(st.type==='time'){let a=0;for(const p of st.ph){a+=p[0];if(el<a)return p[2]||'';}return '';}
+ if(st.type==='react'&&game&&game.kind==='react'){for(const x of game.R){if(el>=x.start&&el<x.end)return el<x.fire?'준비… 소리를 기다려요':'일어나서 멈춰요!';}return el<game.done?'오른 무릎 앉아':'끝! 잠깐 쉬어요';}
  if(st.type==='count'){for(let k=0;k<st._b.length;k++){const b=st._b[k];if(el<b.end)return b.label||'';}return '끝! 잠깐 쉬어요';}
  return '';
 }
@@ -458,6 +497,7 @@ function drawStage(){
  if(!started){drawAnim('march',(animClock%1100)/1100);return;}
  if(sg.kind==='rest'){
   const nm=st.type==='time'?st.ph[0][1]:st.type==='count'?st.blocks[0].anim:null;
+  if(st.type==='react'){render(KN,{},false,false);return;}
   if(nm){const A=AN[nm.replace('|m','')];drawAnim(nm,((animClock/ (A.ms))%1));}else drawAnim('rest',(animClock%3000)/3000);
   return;
  }
@@ -475,6 +515,16 @@ function drawStage(){
   ctr.classList.add('on');
   return;
  }
+ if(st.type==='react'&&game&&game.kind==='react'){
+  let q=null;for(const x of game.R){if(el>=x.start&&el<x.end){q=x;break;}}
+  let p,mir1=false;
+  if(q){mir1=q.side===1;
+   if(el<q.fire){const u=(q.r===0)?1:Math.min(1,(el-q.start)/.8);p=lerp(UP,KN,u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2);}
+   else{const u=Math.min(1,(el-q.fire)/.3);p=lerp(KN,UP,1-Math.pow(1-u,3));}
+   $('cNow').textContent=q.r+1;$('cOf').textContent=' / 5';ctr.classList.add('on');
+  }else{mir1=el>=game.sw&&el<game.done;p=el>=game.done?UP:KN;}
+  if(mir1)p=mir(p,false);render(p,{},false,mir1);return;
+ }
  if(game&&game.kind==='strike'){
   let col=null,txt='',tcol='';
   for(const p of game.P){const d=el-p.t;if(d<0||d>3.85)continue;
@@ -483,14 +533,14 @@ function drawStage(){
   const T=$('sText');T.style.opacity=txt?1:0;T.textContent=txt;T.style.color=tcol;
  }
  if(game&&game.kind==='dir'){
-  let lit=null;for(const p of game.D){if(el>=p.t&&el<p.t+.2){lit=p.d;break;}}
+  let lit=null;for(const p of game.D){if(el>=p.t&&el<p.t+.1){lit=p.d;break;}}
   document.querySelectorAll('#dir .cell[data-d]').forEach(c=>c.classList.toggle('lit',c.dataset.d===lit));
  }
 }
 function finish(){
  running=false;finished=true;beep(1046,.3);setTimeout(()=>beep(1318,.4),250);say('오늘 운동 끝! 정말 잘했어요.',true);
  let n=null;try{const k='bbr-week',now=new Date(),wk=now.getFullYear()+'-'+Math.floor((now-new Date(now.getFullYear(),0,1))/604800000);const d=JSON.parse(localStorage.getItem(k)||'{}');d[wk]=(d[wk]||0)+1;localStorage.setItem(k,JSON.stringify(d));n=d[wk];}catch(e){}
- $('endMsg').textContent=n?`30분 동안 정말 잘했어요. 이번 주 ${n}번째 완료!`:'30분 동안 정말 잘했어요.';
+ $('endMsg').textContent=n?`오늘 운동을 끝까지 정말 잘했어요. 이번 주 ${n}번째 완료!`:'오늘 운동을 끝까지 정말 잘했어요.';
  $('endOv').classList.add('on');renderInfo();
 }
 function loop(ts){
